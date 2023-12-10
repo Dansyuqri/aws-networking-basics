@@ -42,6 +42,20 @@ resource "aws_security_group" "first_instance_sg" {
   name        = "first_instance_sg"
   vpc_id      = aws_vpc.main.id
 
+  ingress = [
+    {
+      description = "Allow ICMP"
+      from_port = 8
+      to_port = 0
+      protocol = "icmp"
+      cidr_blocks = [aws_subnet.second.cidr_block]
+      ipv6_cidr_blocks = []
+      prefix_list_ids = []
+      security_groups = []
+      self = false
+    }
+  ]
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -69,6 +83,20 @@ resource "aws_instance" "first" {
 resource "aws_security_group" "second_instance_sg" {
   name        = "second_instance_sg"
   vpc_id      = aws_vpc.main.id
+
+  ingress = [
+    {
+      description = "Allow ICMP"
+      from_port = 8
+      to_port = 0
+      protocol = "icmp"
+      cidr_blocks = [aws_subnet.first.cidr_block]
+      ipv6_cidr_blocks = []
+      prefix_list_ids = []
+      security_groups = []
+      self = false
+    }
+  ]
 
   egress {
     from_port        = 0

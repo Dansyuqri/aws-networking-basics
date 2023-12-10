@@ -65,3 +65,31 @@ resource "aws_instance" "first" {
     Name = "first_instance"
   }
 }
+
+resource "aws_security_group" "second_instance_sg" {
+  name        = "second_instance_sg"
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "second_instance_sg"
+  }
+}
+
+resource "aws_instance" "second" {
+  ami           = data.aws_ami.aml2.id
+  instance_type = "t3.micro"
+  subnet_id = aws_subnet.second.id
+  vpc_security_group_ids = [aws_security_group.second_instance_sg.id]
+  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
+
+  tags = {
+    Name = "second_instance"
+  }
+}

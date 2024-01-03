@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ap-southeast-1"
+  region  = "ap-southeast-1"
   profile = "network-basics"
 
   default_tags {
@@ -10,7 +10,7 @@ provider "aws" {
 }
 
 resource "aws_vpc" "main" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
 
   tags = {
@@ -19,8 +19,8 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "first" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "ap-southeast-1a"
 
   tags = {
@@ -29,8 +29,8 @@ resource "aws_subnet" "first" {
 }
 
 resource "aws_subnet" "second" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.2.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "ap-southeast-1a"
 
   tags = {
@@ -39,28 +39,28 @@ resource "aws_subnet" "second" {
 }
 
 resource "aws_security_group" "first_instance_sg" {
-  name        = "first_instance_sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "first_instance_sg"
+  vpc_id = aws_vpc.main.id
 
   ingress = [
     {
-      description = "Allow ICMP"
-      from_port = 8
-      to_port = 0
-      protocol = "icmp"
-      cidr_blocks = [aws_subnet.second.cidr_block]
+      description      = "Allow ICMP"
+      from_port        = 8
+      to_port          = 0
+      protocol         = "icmp"
+      cidr_blocks      = [aws_subnet.second.cidr_block]
       ipv6_cidr_blocks = []
-      prefix_list_ids = []
-      security_groups = []
-      self = false
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
     }
   ]
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -69,11 +69,11 @@ resource "aws_security_group" "first_instance_sg" {
 }
 
 resource "aws_instance" "first" {
-  ami           = data.aws_ami.aml2.id
-  instance_type = "t3.micro"
-  subnet_id = aws_subnet.first.id
+  ami                    = data.aws_ami.aml2.id
+  instance_type          = "t3.micro"
+  subnet_id              = aws_subnet.first.id
   vpc_security_group_ids = [aws_security_group.first_instance_sg.id]
-  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
 
   tags = {
     Name = "first_instance"
@@ -81,28 +81,28 @@ resource "aws_instance" "first" {
 }
 
 resource "aws_security_group" "second_instance_sg" {
-  name        = "second_instance_sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "second_instance_sg"
+  vpc_id = aws_vpc.main.id
 
   ingress = [
     {
-      description = "Allow ICMP"
-      from_port = 8
-      to_port = 0
-      protocol = "icmp"
-      cidr_blocks = [aws_subnet.first.cidr_block]
+      description      = "Allow ICMP"
+      from_port        = 8
+      to_port          = 0
+      protocol         = "icmp"
+      cidr_blocks      = [aws_subnet.first.cidr_block]
       ipv6_cidr_blocks = []
-      prefix_list_ids = []
-      security_groups = []
-      self = false
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
     }
   ]
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -111,11 +111,11 @@ resource "aws_security_group" "second_instance_sg" {
 }
 
 resource "aws_instance" "second" {
-  ami           = data.aws_ami.aml2.id
-  instance_type = "t3.micro"
-  subnet_id = aws_subnet.second.id
+  ami                    = data.aws_ami.aml2.id
+  instance_type          = "t3.micro"
+  subnet_id              = aws_subnet.second.id
   vpc_security_group_ids = [aws_security_group.second_instance_sg.id]
-  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
 
   tags = {
     Name = "second_instance"
